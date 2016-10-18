@@ -3,11 +3,17 @@ from .models import Post
 from django.utils import timezone
 from .forms import PostForm
 from django.shortcuts import redirect
+from django.views.generic.base import TemplateView
 
 # Create your views here.
-def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'livejournal/post_list.html', {'posts':posts})
+
+class PostList(TemplateView):
+    template_name = 'livejournal/post_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(PostList, self).get_context_data(*args, **kwargs)
+        context['posts'] = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+        return context
 
 def post_detail(request, pk):
     the_post = get_object_or_404(Post, pk=pk)
