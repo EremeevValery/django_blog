@@ -4,6 +4,7 @@ from django.utils import timezone
 from .forms import PostForm
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
+from django.views.generic import DetailView
 
 # Create your views here.
 
@@ -15,10 +16,11 @@ class PostList(TemplateView):
         context['posts'] = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
         return context
 
-def post_detail(request, pk):
-    the_post = get_object_or_404(Post, pk=pk)
-    return render(request, 'livejournal/post_detail.html', {'post': the_post})
+class PostDetail(DetailView):
+    model = Post
+    context_object_name = 'post'
 
+'''        
 def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -45,3 +47,5 @@ def post_edit(request, pk):
         else:
             form = PostForm(instance=post)
         return render(request, 'livejournal/post_edit.html', {'form': form})
+
+'''
